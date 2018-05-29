@@ -6,6 +6,12 @@ const HtmlWebpackPlugin = require("html-webpack-plugin"); // html引擎
 //const ExtractTextPlugin = require('extract-text-webpack-plugin'); //抽离css
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
+const { VueLoaderPlugin } = require('vue-loader')
+const delimiter = path.delimiter;
+
+function resolve (dir) {
+  return path.join(__dirname, '..', dir)
+}
 
 var entries = getEntry("./src/**/*.js");
 var chunks = Object.keys(entries);
@@ -29,7 +35,8 @@ const base = {
                     'css-hot-loader',
                     MiniCssExtractPlugin.loader,
                     "css-loader",
-                    'postcss-loader'
+                    //'postcss-loader'
+					{ loader: 'postcss-loader', options: { parser: 'sugarss', exec: true } }
                 ]
             },
             {
@@ -107,10 +114,15 @@ const base = {
         new MiniCssExtractPlugin({
             filename: "[name].css",
             chunkFilename: "[id].css"
-        })
+        }),
+		new VueLoaderPlugin()
     ],
     resolve: {
-        extensions: [".js", '.vue']
+		extensions: ['.js', '.vue', '.json'],
+		alias: {
+		  'vue$': 'vue/dist/vue.esm.js',
+		  '@': resolve('src'),
+		}
     }
     /*,externals: {// 用来配置require的返回。一般用于加载cdn
     }*/
@@ -122,8 +134,8 @@ for (var pathname in pages) {
         hash: true,
         inject: true,
         template: pages[pathname],
-        filename: "/view/" + pathname + ".html", // 输出html文件的路径
-        chunks: ['vendors', pathname]
+        filename: __dirname + "/view/" + pathname + ".html" // 输出html文件的路径
+        //,chunks: ['vendors', pathname]
     };
     base.plugins.push(new HtmlWebpackPlugin(conf));
 }

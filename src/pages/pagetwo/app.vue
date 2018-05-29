@@ -11,7 +11,7 @@ body {
 
 <template>
   <div>
-    <img src="../../static/logo.png" alt="" class="logo">
+    <img src="../../static/img/logo.png" alt="" class="logo">
     <h1>{{msg}}</h1>
     <comp-a></comp-a>
   </div>
